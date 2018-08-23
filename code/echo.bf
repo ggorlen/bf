@@ -1,0 +1,1 @@
+,[.[-],]  echo out input
