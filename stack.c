@@ -1,11 +1,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
-
-typedef struct Stack {
-    int data;
-    struct Stack *next;
-} Stack;
+#include "stack.h"
 
 Stack *newNode(int data) {
     Stack *node = malloc(sizeof(node));
