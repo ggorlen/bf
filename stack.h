@@ -1,15 +1,14 @@
-#ifndef STACK_H
-#define STACK_H
+#ifndef __STACK_H__
+#define __STACK_H__
 
 typedef struct Stack {
-    int data;
+    void *data;
     struct Stack *next;
 } Stack;
 
-Stack *newNode(int data);
-void push(Stack **s, int data);
-int peek(Stack *s);
+void push(Stack **s, void *data);
+void *peek(Stack **s);
 void pop(Stack **s);
-void freeStack(Stack **s);
+void free_stack(Stack **s);
 
 #endif

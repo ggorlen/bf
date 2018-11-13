@@ -6,7 +6,8 @@
 #define CELL_SIZE 256
 #define TAPE_SIZE 30000
 
-void interpret(char *src, char *input) {
+char *interpret(char *src, char *input) {
+    int top, i;
     int tape_ptr = 0;
     int input_ptr = 0;
     int src_ptr = 0;
@@ -14,16 +15,21 @@ void interpret(char *src, char *input) {
     int input_len = strlen(input);
     int tape[TAPE_SIZE] = {0};
     int brackets[src_len];
-    memset(brackets, -1, sizeof(brackets));
+    int i_refs[src_len];
+    char *result = malloc(sizeof(int) * src_len);
+    int result_len = 0;
+    int result_capacity = src_len - 1;
     Stack *s = NULL;
     
-    for (int i = 0; i < src_len; i++) {
+    for (i = 0; i < src_len; i++) {
         if (src[i] == '[') {
-            push(&s, i);
+            i_refs[i] = i;
+            push(&s, &i_refs[i]);
         }
         else if (src[i] == ']') {
-            brackets[i] = peek(s);
-            brackets[peek(s)] = i;
+            top = *((int*)peek(&s));
+            brackets[i] = top; 
+            brackets[top] = i;
             pop(&s);
         }
     }
@@ -41,7 +47,7 @@ void interpret(char *src, char *input) {
             break;
         case '-': 
             tape[tape_ptr] = tape[tape_ptr] == 0 ? 
-                CELL_SIZE - 1 : tape[tape_ptr] - 1;
+                             CELL_SIZE - 1 : tape[tape_ptr] - 1;
             break;
         case ',':
             if (input_ptr < input_len) {
@@ -50,8 +56,21 @@ void interpret(char *src, char *input) {
 
             break;
         case '.':
-            printf("%c", tape[tape_ptr]);
-            break;
+            if (result_len >= result_capacity) {
+                result_capacity *= 2;
+                char *tmp = realloc(result, result_capacity * sizeof(*tmp));
+     
+                if (tmp) {
+                    result = tmp;
+                } 
+                else {
+                    fprintf(stderr, "%s: %d: realloc failure\n", __func__, __LINE__);
+                    exit(0);
+                }
+            }
+     
+            result[result_len++] = tape[tape_ptr];
+        break;
         case '[':
             if (tape[tape_ptr] == 0) { 
                 src_ptr = brackets[src_ptr];
@@ -66,4 +85,7 @@ void interpret(char *src, char *input) {
             break;
         }
     }
+
+    result[result_len] = '\0';
+    return result;
 }

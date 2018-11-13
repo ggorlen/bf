@@ -9,10 +9,10 @@ char *read(char *fname) {
     char line[LINE_LEN];
     size_t result_len = 0;
     size_t result_size = LINE_LEN;
-    char *result = malloc(sizeof(result) * LINE_LEN);
+    char *result = malloc(sizeof(*result) * LINE_LEN);
 
     if (!result) {
-        puts("malloc failure");
+        fprintf(stderr, "%s: %d: malloc failure\n", __func__, __LINE__);
         exit(0);
     }
 
@@ -20,8 +20,8 @@ char *read(char *fname) {
     FILE *fin = fopen(fname, "r");
 
     if (!fin) {
-        puts("fopen error"); 
-        exit(0); 
+        fprintf(stderr, "%s: %d: fopen error\n", __func__, __LINE__);
+        exit(0);
     }
 
     while (!feof(fin) && fgets(line, LINE_LEN, fin)) {
@@ -31,13 +31,14 @@ char *read(char *fname) {
         // expand result array as needed
         while (result_len >= result_size) {
             result_size += LINE_LEN;
-            char *tmp = realloc(result, result_len * sizeof(tmp));
+            char *tmp = realloc(result, result_len * sizeof(*tmp));
 
             if (tmp) {
                 result = tmp;
             } 
             else {
-                puts("realloc failure");
+                fprintf(stderr, "%s: %d: realloc failure\n", __func__, __LINE__);
+                exit(0);
             }
         }
 
@@ -55,16 +56,20 @@ int main(int argc, char** argv) {
     }
 
     char *src = read(argv[1]);
+    char *result;
 
     if (argc == 3) {
         char *input = read(argv[2]);
-        interpret(src, input);
+        result = interpret(src, input);
         free(input);
     }
     else {
-        interpret(src, "");
+        result = interpret(src, "");
     }
 
+    printf("%s\n", result);
+    free(result);
     free(src);
+
     return 0;
 }

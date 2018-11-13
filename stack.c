@@ -1,24 +1,15 @@
-#include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 #include "stack.h"
 
-Stack *newNode(int data) {
-    Stack *node = malloc(sizeof(node));
-    assert(node);
-    node->data = data;
-    node->next = NULL;
-    return node;
-}
-
-void push(Stack **s, int data) {
-    Stack *top = newNode(data);
+void push(Stack **s, void *data) {
+    Stack *top = malloc(sizeof(*top));
+    top->data = data;
     top->next = *s;
     *s = top;
 }
 
-int peek(Stack *s) {
-    return s ? s->data : -INFINITY;
+void *peek(Stack **s) {
+    return *s ? (*s)->data : NULL;
 }
 
 void pop(Stack **s) {
@@ -29,7 +20,7 @@ void pop(Stack **s) {
     }
 }
 
-void freeStack(Stack **s) {
+void free_stack(Stack **s) {
     while (*s) {
         pop(s);
     }
