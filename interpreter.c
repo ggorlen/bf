@@ -16,7 +16,7 @@ char *interpret(char *src, char *input) {
     int tape[TAPE_SIZE] = {0};
     int brackets[src_len];
     int i_refs[src_len];
-    char *result = malloc(sizeof(int) * src_len);
+    char *result = malloc(sizeof(*result) * src_len);
     int result_len = 0;
     int result_capacity = src_len - 1;
     Stack *s = NULL;
@@ -27,7 +27,7 @@ char *interpret(char *src, char *input) {
             push(&s, &i_refs[i]);
         }
         else if (src[i] == ']') {
-            top = *((int*)peek(&s));
+            top = *(int *)peek(&s);
             brackets[i] = top; 
             brackets[top] = i;
             pop(&s);
@@ -70,7 +70,7 @@ char *interpret(char *src, char *input) {
             }
      
             result[result_len++] = tape[tape_ptr];
-        break;
+            break;
         case '[':
             if (tape[tape_ptr] == 0) { 
                 src_ptr = brackets[src_ptr];
